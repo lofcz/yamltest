@@ -1,0 +1,30 @@
+name: GitHub Notification
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Přidáno pro manuální spuštění
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Create notification issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const now = new Date();
+            const timeString = now.toLocaleString('cs-CZ', { 
+              timeZone: 'Europe/Prague',
+              dateStyle: 'full',
+              timeStyle: 'long'
+            });
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Notification: Hello World (${timeString})`,
+              body: `🔔 This is your scheduled notification!\nČas spuštění: ${timeString}`,
+              labels: ['notification']
+            });
